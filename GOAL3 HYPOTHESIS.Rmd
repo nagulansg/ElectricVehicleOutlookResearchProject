@@ -1,0 +1,134 @@
+
+
+```{r}
+library(quantmod)
+library(ggplot2)
+library(lubridate)
+library(dplyr)
+library(car)
+```
+
+
+```{r}
+car.data <- read.csv("Goal3data.csv")
+car.data1 <- filter(car.data,PROVINCE == "AB")
+
+ev.data1 <- filter(car.data1,VEHICLE.TYPE == "CAR" & FUEL.TYPE == "ELECTRIC")
+conv.fuel.data1 <- filter(car.data1,VEHICLE.TYPE == "CAR" & FUEL.TYPE == "CONV.FUEL")
+hybrid.data1 <- filter(car.data1,VEHICLE.TYPE == "CAR" & FUEL.TYPE == "HYBRID")
+```
+
+TESTING ASSUMPTIONS:
+ARE BOTH SAMPLES NORMAL? - NO
+or
+ARE BOTH SAMPLE SIZES >= 25? NO
+
+We will be using the Mann-Whitney Test, also known as Wilcoxon Rank Sum Test.
+
+```{r}
+
+shapiro.test(ev.data1$GHG) #normal, p-value is  not significant
+hist(ev.data1$GHG,breaks=12)
+qqPlot(ev.data1$GHG)
+```
+
+```{r}
+shapiro.test(conv.fuel.data1$GHG) #not normal, p-value is significant
+hist(conv.fuel.data1$GHG,breaks=12)
+qqPlot(conv.fuel.data1$GHG) 
+```
+```{r}
+wilcox.test(x=ev.data1$GHG,y=conv.fuel.data1$GHG,alternative = "less",paired=FALSE)
+```
+R uses normal approximation to calculate the p-value because of the ties and less than 50 finite values.
+
+p-value tells us we have EQUAL MEDIANS
+
+H0: Media 1 = Median 2
+Ha : Median 1 <= Median 2
+
+Our P-value of 0.3509 is not significant at a 5% alpha. Therefore,we fail to reject the null hypothesis that the median GHG emissions for Electric Vehicles in Alberta is the same as the median GHG emissions for conventional gasoline cars in Alberta as we fail to reject
+
+
+###################################### BC ##############################################
+
+```{r}
+car.data2 <- filter(car.data,PROVINCE == "BC")
+
+ev.data2 <- filter(car.data2,VEHICLE.TYPE == "CAR" & FUEL.TYPE == "ELECTRIC")
+conv.fuel.data2 <- filter(car.data2,VEHICLE.TYPE == "CAR" & FUEL.TYPE == "CONV.FUEL")
+hybrid.data2 <- filter(car.data2,VEHICLE.TYPE == "CAR" & FUEL.TYPE == "HYBRID")
+```
+
+```{r}
+shapiro.test(ev.data2$GHG) #normal, p-value is  not significant
+hist(ev.data2$GHG,breaks=12)
+qqPlot(ev.data2$GHG)
+
+```
+
+```{r}
+shapiro.test(conv.fuel.data2$GHG) #not normal, p-value is significant
+hist(conv.fuel.data2$GHG,breaks=12)
+qqPlot(conv.fuel.data2$GHG) 
+```
+
+
+TESTING ASSUMPTIONS:
+ARE BOTH SAMPLES NORMAL? - NO
+or
+ARE BOTH SAMPLE SIZES >= 25? NO
+
+We will be using the Mann-Whitney Test, also known as Wilcoxon Rank Sum Test.
+
+
+
+
+```{r}
+wilcox.test(x=ev.data2$GHG,y=conv.fuel.data2$GHG,alternative = "less",paired=FALSE)
+```
+
+
+H0: BC EV GHG median = BC CONV.FUEL GHG median
+Ha : BC EV GHG median <= BC CONV.FUEL GHG median
+
+
+Our p-value of 0.0007 is significant at 5% alpha. We can reject the null hypothesis that the median GHG emissions released by electric vehicles in BC is the same as that of the conventional gasoline vehicles in BC. We would accept the alternative hypothesis that the median GHG emissions of electric vehicles in BC is less than that of conventional gasoline vehicles in BC.
+
+
+
+
+
+
+
+
+
+
+
+###################################### ONTARIO###########################################
+  
+```{r}
+car.data2 <- filter(car.data,PROVINCE == "ON")
+
+ev.data2 <- filter(car.data2,VEHICLE.TYPE == "CAR" & FUEL.TYPE == "ELECTRIC")
+conv.fuel.data2 <- filter(car.data2,VEHICLE.TYPE == "CAR" & FUEL.TYPE == "CONV.FUEL")
+hybrid.data2 <- filter(car.data2,VEHICLE.TYPE == "CAR" & FUEL.TYPE == "HYBRID")
+```
+
+```{r}
+shapiro.test(ev.data2$GHG) #normal, p-value is  not significant
+hist(ev.data2$GHG,breaks=12)
+qqPlot(ev.data2$GHG)
+
+```
+
+```{r}
+shapiro.test(conv.fuel.data2$GHG) #not normal, p-value is significant
+hist(conv.fuel.data2$GHG,breaks=12)
+qqPlot(conv.fuel.data2$GHG) 
+```
+```{r}
+wilcox.test(x=ev.data2$GHG,y=conv.fuel.data2$GHG,alternative = "less",paired=FALSE)
+```
+
+

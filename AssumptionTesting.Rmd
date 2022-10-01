@@ -1,0 +1,63 @@
+
+```{r}
+#install.packages("reshape2")
+library(reshape2)
+library(ggplot2)
+library(car)
+```
+
+```{r}
+data_file <- read.csv("CleanedData - assumptiontest.csv")
+head(data_file)
+
+
+```
+```{r}
+reg_model <- lm(TSLA~.,data = data_file)
+summary(reg_model)
+```
+```{r}
+#Are errors normally distributed and having a mean of zero? Seems like it
+hist(reg_model$residuals)
+mean(reg_model$residuals)
+```
+```{r}
+#clearly there is multicollinearity (Which we will double check with VIF) AND there isnt a linear relationship between predictors and dependent variable.
+plot(data_file[,5:12],pch=15)
+```
+
+```{r}
+#checking multicollinearity - our VIFs are way too high
+vif(reg_model)
+```
+
+```{r}
+#checking for homoskedasticity
+plot(reg_model,1)
+```
+```{r}
+#p value is 0 , meaning the errors are not independent
+durbinWatsonTest(reg_model)
+```
+
+```{r}
+#11 is the column with tesla
+data_file_prediction <- data_file
+for (i in 1:nrow(data_file)){
+data_file_prediction$predicted[i] <- predict(reg_model,data.frame(PalladiumPrice=data_file[i,1],CobaltPrice=data_file[i,2],NickelPrice=data_file[i,3],ZincPrice=data_file[i,4],GC.F.Adjusted=data_file[i,5],SI.F.Adjusted=data_file[i,6],CL.F.Adjusted=data_file[i,7],HG.F.Adjusted=data_file[i,8],ChargingStation=data_file[i,9],LithiumSpotUSD=data_file[i,10],USPolParty.1.Dem.=data_file[i,12]))}
+```
+
+
+
+```{r}
+#library(ggplot2)
+data_file_prediction$index[1:nrow(data_file_prediction)] <- c(seq(1:nrow(data_file_prediction)))
+head(data_file_prediction)
+```
+
+```{r}
+#dfpforvisual <- melt(data_file_prediction[,c(11,13,14)], "index")
+#ggplot(dfpforvisual,aes(x=index,y=value,color=variable))+geom_line()
+```
+
+
